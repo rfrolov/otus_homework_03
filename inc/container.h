@@ -16,6 +16,7 @@ class container {
 
     struct iterator : std::iterator<std::forward_iterator_tag, T> {
         explicit iterator(node *_ptr = nullptr) : ptr_(_ptr) {}
+        iterator() = delete;
 
         iterator &operator++() {
             if (ptr_ != nullptr) {
@@ -61,6 +62,7 @@ class container {
         return iterator(nullptr);
     }
 
+    container() = default;
     ~container() {
         auto h = head_;
         while (h != nullptr) {

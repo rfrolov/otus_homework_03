@@ -42,23 +42,25 @@ namespace custom {
     private:
         T *addNote(size_t n) {
             size_t cnt = 0;
+            T *ptr = reinterpret_cast<T *>(&data_);
             for (size_t i = 0; i < N; ++i) {
                 cnt = (!mask_.test(i)) ? cnt + 1 : 0;
                 if (cnt == n) {
                     auto firstElement = i + 1 - n;
                     mask_.set(firstElement);
-                    return &data_[firstElement];
+                    return &ptr[firstElement];
                 }
             }
             return nullptr;
         }
 
         bool delNote(T *p, std::size_t n) {
-            if (n > N || p < &data_[0] || p > &data_[N - 1]) {
+            const T *ptr = reinterpret_cast<T *>(&data_);
+            if (n > N || p < &ptr[0] || p > &ptr[N - 1]) {
                 return false;
             }
 
-            for (size_t i = p - data_.data(); i < n; ++i) {
+            for (size_t i = p - ptr; i < n; ++i) {
                 mask_.reset(static_cast<size_t>(i));
             }
             return true;
@@ -66,7 +68,7 @@ namespace custom {
 
     private:
         std::bitset<N> mask_{0};
-        std::array<T, N> data_;
+        std::array<uint8_t, N * sizeof(T)> data_;
 
         static_assert(N >= 1, "N must be greater than or equal to 1.");
     };
